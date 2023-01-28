@@ -17,20 +17,21 @@ Neuron::Neuron()
     _long_term_mem = 0;  // The neuron gets a long term memory from previous neurons
     _short_term_mem = 0; // The neuron gets a short term memory from a previous neuron
 
+    _candidate_iw = 1;
+    _candidate_sw = 1;
+    _candidate_bias = 0;
+
     // Determine the initial state of the weights/biases
-    _forget_gate.set_iw(rand() / RAND_MAX);
-    _forget_gate.set_sw(rand() / RAND_MAX);
+    _forget_gate.set_iw(1);
+    _forget_gate.set_sw(1);
     _forget_gate.set_bias(0);
 
-    _input_gate.set_iw1(rand() / RAND_MAX);
-    _input_gate.set_iw2(rand() / RAND_MAX);
-    _input_gate.set_b1(0);
-    _input_gate.set_sw1(rand() / RAND_MAX);
-    _input_gate.set_sw2(rand() / RAND_MAX);
-    _input_gate.set_b2(0);
+    _input_gate.set_iw(1);
+    _input_gate.set_sw(1);
+    _input_gate.set_bias(0);
 
-    _output_gate.set_iw(rand() / RAND_MAX);
-    _output_gate.set_sw(rand() / RAND_MAX);
+    _output_gate.set_iw(1);
+    _output_gate.set_sw(1);
     _output_gate.set_bias(0);
 }
 
@@ -66,6 +67,21 @@ void Neuron::set_short(double new_STM)
     _short_term_mem = new_STM;
 }
 
+void Neuron::set_cand_iw(double x)
+{
+    _candidate_iw = x;
+}
+
+void Neuron::set_cand_sw(double x)
+{
+    _candidate_sw = x;
+}
+
+void Neuron::set_cand_bias(double x)
+{
+    _candidate_bias = x;
+}
+
 // Update members does all of the getting
 void Neuron::update_members(double input, double stm, double ltm)
 {
@@ -74,42 +90,33 @@ void Neuron::update_members(double input, double stm, double ltm)
     _long_term_mem = ltm;
 }
 
-// Generate an output
+// Return the value of the short term memory after propogating the current member variables
 double Neuron::feedforward()
 {
-    // Perform forget gate operations
-    // update forget gate with internal values
-    _forget_gate.update_members(_input, _short_term_mem, _long_term_mem); // Pass values to forget gate
-    _long_term_mem *= _forget_gate.feedforward();                         // Perform forget gate's operations and update LTM
+    // Perform feedforward with Forget gate first
+    _forget_gate.update_members(_input, _short_term_mem, _long_term_mem);
+    double f_t = _forget_gate.feedforward();
 
-    // Perform input gate operations
-    _input_gate.update_members(_input, _short_term_mem, _long_term_mem); // Pass values to input gate
-    _long_term_mem += _input_gate.feedforward();                         // Perform input gate's operation and update LTM
+    // "Forget" part of the internal state
+    _long_term_mem *= f_t;
 
-    // Perform output gate operations
-    _output_gate.update_members(_input, _long_term_mem, _short_term_mem); // Pass values to output gate
-    _short_term_mem = _output_gate.feedforward();                         // Perform output gate's operations
+    // Perform feedforward with input gate
+    _input_gate.update_members(_input, _short_term_mem, _long_term_mem);
+    double i_t = _input_gate.feedforward();
+
+    // Calculate candidate state
+    double g_t = tanh(_input * _candidate_iw + _short_term_mem * _candidate_sw + _candidate_bias);
+
+    // Update long term memory (Cell state)
+    double ltm_inc = i_t * g_t;
+    _long_term_mem += ltm_inc;
+
+    // Perform feedforward with output gate
+    _output_gate.update_members(_input, _long_term_mem, _short_term_mem);
+    double o_t = _output_gate.feedforward();
+
+    // Update short term memory
+    _short_term_mem = o_t * tanh(_long_term_mem);
 
     return _short_term_mem;
-}
-
-double diff_tanh(double x)
-{
-    return (1 - pow(tanh(x), 2));
-}
-
-double diff_sigmoid(double x)
-{
-    return (1 / (1 + exp(-x))) * (1 - 1 / (1 + exp(-x)));
-}
-
-double Neuron::ResidualSumOfSquares(double expected)
-{
-    // Squred error: expected - predicted
-    return pow(expected - _short_term_mem, 2);
-}
-
-double Neuron::RSS_derivative(double expected)
-{
-    return -_short_term_mem * (expected - _short_term_mem);
 }

@@ -12,12 +12,7 @@ OutputGate::OutputGate()
     _sum_bias = 0;     // The sum of short-term mem and input has a bias
 }
 
-double OutputGate::potential_activation(double x)
-{
-    return tanh(x);
-}
-
-double OutputGate::remember_activation(double x)
+double OutputGate::sigmoid(double x)
 {
     return 1 / (1 + exp(-x));
 }
@@ -52,12 +47,5 @@ void OutputGate::update_weights(double w1, double w2, double b1)
 // Generate new short term memory - output of the neuron
 double OutputGate::feedforward()
 {
-    // Calculate new memory
-    double new_mem = (_short_term_mem * _short_weight) + (_input * _input_weight) + _sum_bias;
-    new_mem = potential_activation(new_mem);
-
-    // Calculate percent to remember
-    double mem_percent = remember_activation(_long_term_mem);
-
-    return new_mem * mem_percent;
+    return sigmoid(_input * _input + _short_term_mem * _short_weight + _sum_bias);
 }

@@ -34,8 +34,7 @@ private:
     double _sum_bias;     // The sum of short-term mem and input has a bias
 
     // private functions
-    double potential_activation(double x); // The value of the long term memory is used in a tanh function to create a new short term memory
-    double remember_activation(double x);  // Use sigmoid to calculate how much of the short term mem should be remembered
+    double sigmoid(double x); // Use sigmoid to calculate how much of the short term mem should be remembered
 
 public:
     // Set member variables
