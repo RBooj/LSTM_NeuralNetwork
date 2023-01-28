@@ -6,6 +6,7 @@
 \usepackage{indentfirst}
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage{amssymb}
 
 \graphicspath{{./images/}}
 
@@ -66,9 +67,16 @@ To understand how the data propagates through the network more clearly, it
 helps to express the operations through math. This also helps later when
 calculating error. To begin, the input gate's operation can be expressed as:
 \begin{equation}
-    i_t = \sigma(x_t*U_f + h_{t-1}*w_f + b_f)
+    f_t = \sigma(x_t*U_f + h_{t-1}*W_f + b_f)
 \end{equation}
-Where $x_t$ is the input to the gate at time \emph{t}, $h_{t-1}$ is the value of the hidden state, or short-term memory, at time $t - 1$, and $U_f$, $$, $$
+
+Where $x_t$ is the input to the gate at time \emph{t}, $h_{t-1}$ is the value
+of the hidden state, or short-term memory, at time $t - 1$, and $U_f$, $W_f$,
+and $b_f$ are the weights and biases of the Forget Gate.
+
+This equation will be used later when training the network for comparing error
+between expected value and predicted value ($f_t$).
+
 \subsubsection{InputGate}
 
 The Input Gate class implements the second function of a LSTM neuron. This
@@ -86,9 +94,9 @@ term memory.
 
 The orange block uses the same values as the green block, with different
 weights, to calculate the actual value of the new long term memory. The block
-has a special name: the \textbf{candidate state}. This calculation uses the
-$\tanh$ function. This function returns a value between -1 and 1, which
-represents the new information.
+has a special name: the \textbf{candidate state}, and is discussed in The
+Architecture section. This calculation uses the $\tanh$ function. This function
+returns a value between -1 and 1, which represents the new information.
 
 After completing the calculations of both blocks, the product of the computed
 values is added to the long term memory.
@@ -97,6 +105,16 @@ values is added to the long term memory.
     \includegraphics{InputGate.png}\\
     \emph{Figure 2 - LSTM Input Gate}
 \end{center}
+
+The Input Gate's operation can be described by:
+
+\begin{equation}
+    i_t = \sigma(x_t*U_i + h_{t-1}*W_i + b_i)
+\end{equation}
+
+Where $x_t$ is the input to the gate at time \emph{t}, $h_{t-1}$ is the value
+of the hidden state, or short-term memory, at time $t - 1$, and $U_i$, $W_i$,
+and $b_i$ are the weights and biases of the Input Gate.
 
 \subsubsection{Output Gate}
 
@@ -123,8 +141,44 @@ value is the new short term memory, and it is an output of neuron.
     \emph{Figure 3 - LSTM Output}
 \end{center}
 
+The Output Gate's operation can be described by:
+
+\begin{equation}
+    o_t = \sigma(x_t*U_o + h_{t-1}*W_o + b_o)
+\end{equation}
+
+Where $x_t$ is the input to the gate at time \emph{t}, $h_{t-1}$ is the value
+of the hidden state, or short-term memory, at time $t - 1$, and $U_o$, $W_o$,
+and $b_o$ are the weights and biases of the Output Gate.
+
+\subsection{Architecture}
+
+The data is propagated through the network of gates by calculating the outputs
+of each gate and performing operations on the internal short and long term
+``memory'' (a.k.a the hidden state and cell state respectively). The operations
+performed on these internal values can be represented by the following
+equations:
+
+\begin{equation}
+    C_t = f_t*C_{t-1} + i_t*g_t\\
+    H_t = o_t*tanh(C_t)
+\end{equation}
+
+Where $C_t$ and $H_t$ are the new values of the short and long term memory
+(Cell and Hidden states) and $g_t$ is the value of the candidate state:
+
+\begin{equation}
+    g_t = tanh(x_t*U_g + h_{t-1}*W_o + b_g)
+\end{equation}
+
+The output of the network at a time $t$ can be checked by performing the
+calculation for $H_t$ and is often filtered through a softmax function to
+normalize the output to a probability distribution when the network is built
+using multidimensional data (i.e. $x_t \in \mathbb{R}^n$ where $n > 1$).
+
 \section{Conclusion}
 The LSTM neural network aims to fix the problem of vanishing gradients present
-in basic and recurrent neural networks.
+in basic and recurrent neural networks by only allowing incremental updates to
+the recurrent state.
 
 \end{document}
