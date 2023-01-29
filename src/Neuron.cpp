@@ -120,3 +120,6 @@ double Neuron::feedforward()
 
     return _short_term_mem;
 }
+
+// TODO:: Write backpropogation algorithm
+// TODO:: Write parent class to manage the network and handle many dimensions of data.

@@ -155,9 +155,9 @@ and $b_o$ are the weights and biases of the Output Gate.
 
 The data is propagated through the network of gates by calculating the outputs
 of each gate and performing operations on the internal short and long term
-``memory'' (a.k.a the hidden state and cell state respectively). The operations
-performed on these internal values can be represented by the following
-equations:
+``memory'' (a.k.a. the hidden state and cell state respectively). The
+operations performed on these internal values can be represented by the
+following equations:
 
 \begin{equation}
     C_t = f_t*C_{t-1} + i_t*g_t
@@ -167,7 +167,8 @@ equations:
 \end{equation}
 
 Where $C_t$ and $H_t$ are the new values of the short and long term memory
-(Cell and Hidden states) and $g_t$ is the value of the candidate state:
+(Cell and Hidden states) at time $t$ and $g_t$ is the value of the candidate
+state:
 
 \begin{equation}
     g_t = tanh(x_t*U_g + h_{t-1}*W_o + b_g)
@@ -177,6 +178,67 @@ The output of the network at a time $t$ can be checked by performing the
 calculation for $H_t$ and is often filtered through a softmax function to
 normalize the output to a probability distribution when the network is built
 using multidimensional data (i.e. $x_t \in \mathbb{R}^n$ where $n > 1$).
+
+The overall architecture can be represented succinctly by Equation 5. When
+performing back propagation, the derivative of this equation is needed. The
+chain rule can be used to calculate the derivatives of Equations 1-4 to be used
+in the calculation of Equation 5.
+
+\subsection{Backwards Propagation  (Training)}
+
+Given some input $x$, the LSTM network predicts some output value, $y$. By
+comparing the predicted value of $y$ to the actual known value of $y$, the
+parameters of the network can be tuned to increase its performance, resulting
+in a smaller difference between $y_{expected}$ and $y_{predicted}$. This
+process is called backwards propagation and is a common technique used to train
+predictive models.
+
+The following algorithm is used to determine how to update the tunable weights
+and biases of the network for a given input value and known expected value:
+
+\begin{equation}
+    W_{new} = W_{old} - (\frac{dL}{dW} * \alpha)
+\end{equation}
+
+Where $W_{new}$ represents the updated parameter, $W_{old}$ represents the
+original value of the parameter, $\frac{dL}{dW}$ represents the derivative of
+the \textbf{Loss Function} with respect to the parameter, and $\alpha$
+represents a value called the \textbf{Learning Rate}. The loss function and
+learning rate are discussed in later sections.
+
+In a LSTM architecture, loss is computed for each LSTM unit in time. For
+instance,
+
+\begin{equation}
+    L = \sum_{t=0}^{T}L_t
+\end{equation}
+
+Where each $L_t$ with $0 \le t \le T$ represents the loss of the LSTM network
+at a given time. In other words, the loss, or error, of the network at a given
+time $T$ is the summation of the loss (error) of each intermediate calculation
+between 0 and $T$.
+
+\subsubsection{Loss Function}
+
+The loss function is simply a way to represent the calculated error of the
+model. There are many useful loss functions that are applicable to different
+scenarios and machine learning models. For example, Mean Squared Error (MSE),
+Mean Absolute Error (MAE) and Mean Bias Error (MBE) to name a few.
+
+It is best practice to use cross-validation to determine the best loss function
+for a set of particular data. For this reason, this document will assume the
+use of a basic loss function to simplify the calculations shown. It is a good
+idea to implement many options after gaining a basic understanding of the
+algorithms and architecture.
+
+\subsubsection{Learning Rate}
+
+The learning rate is a small number that is used to scale the value that
+updates the parameters of the model being trained. This value is important
+because it changes the resolution of the training. If this value was omitted
+and the derivative of the loss function yielded a large value, the training
+algorithm could skip over an optimal value of the parameter being updated.
+Including this value reduces the likelihood of this scenario.
 
 \section{Conclusion}
 The LSTM neural network aims to fix the problem of vanishing gradients present
