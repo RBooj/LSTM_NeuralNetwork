@@ -67,6 +67,7 @@ To understand how the data propagates through the network more clearly, it
 helps to express the operations through math. This also helps later when
 calculating error. To begin, the input gate's operation can be expressed as:
 \begin{equation}
+    \label{eqn:f_t}
     f_t = \sigma(x_t*U_f + h_{t-1}*W_f + b_f)
 \end{equation}
 
@@ -109,6 +110,7 @@ values is added to the long term memory.
 The Input Gate's operation can be described by:
 
 \begin{equation}
+    \label{eqn:i_t}
     i_t = \sigma(x_t*U_i + h_{t-1}*W_i + b_i)
 \end{equation}
 
@@ -132,7 +134,7 @@ saved.
 
 The long term memory is used to determine the value of the new short term
 memory. By passing the value of the long term memory generated in the previous
-stage to a $tanh()$ function. The output value of this function is combined
+stage to a $\tanh()$ function. The output value of this function is combined
 with the output of the sigmoid function in the adjacent block. This output
 value is the new short term memory, and it is an output of neuron.
 
@@ -144,6 +146,7 @@ value is the new short term memory, and it is an output of neuron.
 The Output Gate's operation can be described by:
 
 \begin{equation}
+    \label{eqn:o_t}
     o_t = \sigma(x_t*U_o + h_{t-1}*W_o + b_o)
 \end{equation}
 
@@ -151,7 +154,7 @@ Where $x_t$ is the input to the gate at time \emph{t}, $h_{t-1}$ is the value
 of the hidden state, or short-term memory, at time $t - 1$, and $U_o$, $W_o$,
 and $b_o$ are the weights and biases of the Output Gate.
 
-\subsection{Architecture}
+\section{Architecture}
 
 The data is propagated through the network of gates by calculating the outputs
 of each gate and performing operations on the internal short and long term
@@ -163,7 +166,7 @@ following equations:
     C_t = f_t*C_{t-1} + i_t*g_t
 \end{equation}
 \begin{equation}
-    H_t = o_t*tanh(C_t)
+    H_t = o_t*\tanh(C_t)
 \end{equation}
 
 Where $C_t$ and $H_t$ are the new values of the short and long term memory
@@ -171,11 +174,12 @@ Where $C_t$ and $H_t$ are the new values of the short and long term memory
 state:
 
 \begin{equation}
-    g_t = tanh(x_t*U_g + h_{t-1}*W_o + b_g)
+    \label{eqn:g_t}
+    g_t = \tanh(x_t*U_g + h_{t-1}*W_o + b_g)
 \end{equation}
 
 The output of the network at a time $t$ can be checked by performing the
-calculation for $H_t$ and is often filtered through a softmax function to
+calculation for $H_t$ and is often filtered through a `softmax' function to
 normalize the output to a probability distribution when the network is built
 using multidimensional data (i.e. $x_t \in \mathbb{R}^n$ where $n > 1$).
 
@@ -215,8 +219,58 @@ instance,
 
 Where each $L_t$ with $0 \le t \le T$ represents the loss of the LSTM network
 at a given time. In other words, the loss, or error, of the network at a given
-time $T$ is the summation of the loss (error) of each intermediate calculation
+time $t$ is the summation of the loss (error) of each intermediate calculation
 between 0 and $T$.
+
+The loss function to be evaluated first is the Residual Sum of Squares (RSS)
+loss function.
+
+\begin{equation}
+    L_t = (y_i - H(x_i))^2
+\end{equation}
+
+Where $y_i$ is the i$^{th}$ value to be predicted, $H_i(x_i)$ is the prediction
+from the model with input $x_i$ Backwards propagation is performed by
+calculating the derivative of $L$ with respect to each of the weights and
+biases. That is, we need to calculate:
+
+\begin{equation*}
+    \frac{\partial L}{\partial U_i}, \frac{\partial L}{\partial U_f}. \frac{\partial L}{\partial U_o}, \frac{\partial L}{\partial U_g}, \frac{\partial L}{\partial W_i}, \frac{\partial L}{\partial W_f}, \frac{\partial L}{\partial W_o}, \frac{\partial L}{\partial W_g}
+\end{equation*}
+
+To calculate all these values, keep in mind that the derivatives of the $\tanh$
+and $\sigma$ functions are known:
+
+\begin{equation}
+    \sigma'(x) = \sigma(x)(1-\sigma(x))
+\end{equation}
+\begin{equation}
+    \tanh'(x) = 1 - (\tanh(x))^2
+\end{equation}
+
+In general, to calculate the derivatives of the loss function with respect to
+each of the tunable parameters, follow the chain rule for taking partial
+derivatives. That is, $\frac{\partial L}{\partial param} = (\frac{\partial L}{\partial gate}) (\frac{\partial gate}{\partial param})$.
+
+For this network, the loss function used is the RSS loss function, so:
+
+\begin{subequations}
+    \begin{align}
+        L_t & = (y_t - H_t(x_t))^2                                 \\
+        L_t & = (y_t - (o_t\tanh((C_t))))                          \\
+        L_t & = (y_t - (o_t \tanh((f_t)(C_{t-1}) + (i_t)(g_t))))^2
+    \end{align}
+\end{subequations}
+
+Recall equations \ref{eqn:f_t}, \ref{eqn:i_t}, \ref{eqn:o_t} and \ref{eqn:g_t}
+which describe $f_t$, $i_t$, $o_t$ and $g_t$. Already the complexity of
+equation 12c is almost intolerable. This is why the chain rule is useful.
+
+First,
+
+\begin{math}
+    a
+\end{math}
 
 \subsubsection{Loss Function}
 

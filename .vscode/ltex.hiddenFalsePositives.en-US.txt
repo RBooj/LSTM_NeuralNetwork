@@ -1,0 +1,1 @@
+{"rule":"ADVERB_OR_HYPHENATED_ADJECTIVE","sentence":"^\\QThe loss function to be evaluated first is the Mean Squared Error loss function.\\E$"}
