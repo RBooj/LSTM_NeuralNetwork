@@ -36,6 +36,8 @@ private:
     // private functions
     double sigmoid(double x); // Use a sigmoid activation function for the percent of new memory to remember
 
+    double _output; // Retain result from feeding forward with input gate for backpropagation later
+
 public:
     // Set member variables
     void update_members(double input, double stm, double ltm); // Encapsulate updating all 4 member variables
@@ -44,7 +46,9 @@ public:
     void set_bias(double x);
     void update_weights(double w1, double w2, double b1);
 
+    double get_output(); // RTeturn output value of input gate feedforward
+
     // Input gate operations
-    double feedforward(); // using the current member variables, generate an output
+    void feedforward(); // using the current member variables, generate an output
 };
 #endif

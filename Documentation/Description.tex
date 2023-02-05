@@ -75,9 +75,6 @@ Where $x_t$ is the input to the gate at time \emph{t}, $h_{t-1}$ is the value
 of the hidden state, or short-term memory, at time $t - 1$, and $U_f$, $W_f$,
 and $b_f$ are the weights and biases of the Forget Gate.
 
-This equation will be used later when training the network for comparing error
-between expected value and predicted value ($f_t$).
-
 \subsubsection{InputGate}
 
 The Input Gate class implements the second function of a LSTM neuron. This
@@ -117,6 +114,8 @@ The Input Gate's operation can be described by:
 Where $x_t$ is the input to the gate at time \emph{t}, $h_{t-1}$ is the value
 of the hidden state, or short-term memory, at time $t - 1$, and $U_i$, $W_i$,
 and $b_i$ are the weights and biases of the Input Gate.
+
+The back propagation equations for the Input Gate are:
 
 \subsubsection{Output Gate}
 
@@ -201,6 +200,7 @@ The following algorithm is used to determine how to update the tunable weights
 and biases of the network for a given input value and known expected value:
 
 \begin{equation}
+    \label{eqn:w_new}
     W_{new} = W_{old} - (\frac{dL}{dW} * \alpha)
 \end{equation}
 
@@ -268,9 +268,9 @@ derivatives. That is, $\frac{\partial L}{\partial param} = (\frac{\partial L}{\p
 \end{align*}
 
 By evaluating each equation, we can find the derivative of the loss function
-with respect to each tunable parameter.
-
-% TODO: Resume here
+with respect to each tunable parameter. Then, we use these values to solve
+equation \ref{eqn:w_new}. After each equation has been solved, the value of
+$W_{new}$ will replace each corresponding weight or bias.
 
 \subsubsection{Loss Function}
 

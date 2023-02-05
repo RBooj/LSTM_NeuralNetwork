@@ -36,6 +36,8 @@ private:
     // private functions
     double sigmoid(double x); // Use sigmoid to calculate how much of the short term mem should be remembered
 
+    double _output; // Retain result of feedforward for backpropagation calculation
+
 public:
     // Set member variables
     void update_members(double input, double ltm, double stm); // Encapsulate updating all 3 member variables
@@ -44,7 +46,9 @@ public:
     void set_bias(double x);
     void update_weights(double w1, double w2, double b1);
 
+    double get_output(); // Return result of feedfoward with output gate
+
     // Output gate operations
-    double feedforward(); // using the current member variables, generate an output
+    void feedforward(); // using the current member variables, generate an output
 };
 #endif

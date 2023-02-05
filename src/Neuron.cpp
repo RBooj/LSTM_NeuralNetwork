@@ -1,6 +1,11 @@
 #include "Neuron.h"
 using namespace std;
 
+double Neuron::sigmoid(double x)
+{
+    return 1 / (1 + exp(-x));
+}
+
 // Neuron Constructor
 Neuron::Neuron()
 {
@@ -93,19 +98,26 @@ void Neuron::update_members(double input, double stm, double ltm)
 // Return the value of the short term memory after propogating the current member variables
 double Neuron::feedforward()
 {
+    // Save previous states
+    _C_t_prev = _long_term_mem;
+    _H_t_prev = _short_term_mem;
+
     // Perform feedforward with Forget gate first
     _forget_gate.update_members(_input, _short_term_mem, _long_term_mem);
-    double f_t = _forget_gate.feedforward();
+    _forget_gate.feedforward();
+    double f_t = _forget_gate.get_output();
 
     // "Forget" part of the internal state
     _long_term_mem *= f_t;
 
     // Perform feedforward with input gate
     _input_gate.update_members(_input, _short_term_mem, _long_term_mem);
-    double i_t = _input_gate.feedforward();
+    _input_gate.feedforward();
+    double i_t = _input_gate.get_output();
 
     // Calculate candidate state
-    double g_t = tanh(_input * _candidate_iw + _short_term_mem * _candidate_sw + _candidate_bias);
+    _candidate_state = tanh(_input * _candidate_iw + _short_term_mem * _candidate_sw + _candidate_bias);
+    double g_t = _candidate_state;
 
     // Update long term memory (Cell state)
     double ltm_inc = i_t * g_t;
@@ -113,7 +125,8 @@ double Neuron::feedforward()
 
     // Perform feedforward with output gate
     _output_gate.update_members(_input, _long_term_mem, _short_term_mem);
-    double o_t = _output_gate.feedforward();
+    _output_gate.feedforward();
+    double o_t = _output_gate.get_output();
 
     // Update short term memory
     _short_term_mem = o_t * tanh(_long_term_mem);
@@ -121,5 +134,42 @@ double Neuron::feedforward()
     return _short_term_mem;
 }
 
-// TODO:: Write backpropogation algorithm
+void Neuron::backprop(double expected)
+{
+    // Calculate the new weights and biases according to the equation in the description document
+    // W_new = W_old - (Loss derivative WRT weight/bias)*(learning rate)
+    // Calculating intermediate values
+    // Result from forget gate
+    double f_t = _forget_gate.get_output();
+    // Result from input gate
+    double i_t = _input_gate.get_output();
+    // Result from output gate
+    double o_t = _output_gate.get_output();
+    // Result from candidate state
+    double g_t = _candidate_state;
+
+    // weights/biases
+    double U_f;
+    double W_f;
+    double b_f;
+
+    double U_i;
+    double W_i;
+    double b_i;
+
+    double U_o;
+    double W_o;
+    double b_o;
+
+    double U_g;
+    double W_g;
+    double b_g;
+    // Calculate intermediate values
+    double C_t_tanh_2 = pow(tanh(_long_term_mem), 2);
+    double dLdCt = -2 * (expected - _short_term_mem) * (o_t - o_t * C_t_tanh_2);
+
+    // Forget Gate
+    // TODO: double dLdUf = dLdCt * _C_t_prev * sigmoid();
+    // Resume here - Gathering weights/biases from each gate
+}
 // TODO:: Write parent class to manage the network and handle many dimensions of data.

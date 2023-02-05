@@ -44,8 +44,13 @@ void OutputGate::update_weights(double w1, double w2, double b1)
     _sum_bias = b1;
 }
 
-// Generate new short term memory - output of the neuron
-double OutputGate::feedforward()
+double OutputGate::get_output()
 {
-    return sigmoid(_input * _input + _short_term_mem * _short_weight + _sum_bias);
+    return _output;
+}
+
+// Generate new short term memory - output of the neuron
+void OutputGate::feedforward()
+{
+    _output = sigmoid(_input * _input + _short_term_mem * _short_weight + _sum_bias);
 }

@@ -31,6 +31,14 @@ private:
     double _candidate_sw;
     double _candidate_bias;
 
+    double _candidate_state; // Retain value of candidate state (g_t) for back propagation algorithm
+    double _C_t_prev;        // Retain the previous cell state for back propagation algorithm
+    double _H_t_prev;        // Retain the previous hidden state for back propagation algorithm
+
+    double _learning_rate; // value to use in backpropagation algorithm for small steps of weight/bias values
+
+    double sigmoid(double x); // Sigmoid function definition
+
 public:
     // Constructor/destructor
     Neuron();
@@ -51,6 +59,7 @@ public:
     void set_cand_bias(double x);
 
     // Neuron Operations
-    double feedforward(); // Using the current member variable values, generate an output and update internal memory
+    double feedforward();           // Using the current member variable values, generate an output and update internal memory
+    void backprop(double expected); // Given an expected value, improve the weights and biases of the network
 };
 #endif

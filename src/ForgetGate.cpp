@@ -19,6 +19,11 @@ double ForgetGate::sigmoid(int x)
     return 1 / (1 + exp(-x));
 }
 
+double ForgetGate::get_output()
+{
+    return _output;
+}
+
 // // Basic setters and getters for intercting with neuron class
 // void ForgetGate::update_members(double input, double stm, double ltm)
 // {
@@ -44,7 +49,7 @@ void ForgetGate::set_sw(double x)
 // ----------------------------------------------------------
 
 // Generate the output value using the current member variables and return it
-double ForgetGate::feedforward()
+void ForgetGate::feedforward()
 {
     // Collect values to use internally for determining what percentange of the ltm is kept
     // _input
@@ -53,7 +58,7 @@ double ForgetGate::feedforward()
     // and weights and bias for each
 
     // Calculate intermediate sum and add bias
-    return sigmoid(_sum_bias + (_input * _input_weight) + (_short_term_mem * _short_weight));
+    _output = sigmoid(_sum_bias + (_input * _input_weight) + (_short_term_mem * _short_weight));
 
     // Return the value of the sigmoid function with tmp as its input
 }

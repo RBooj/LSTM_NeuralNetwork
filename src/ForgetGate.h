@@ -35,9 +35,14 @@ private:
 
     double sigmoid(int x); // Use a sigmoid activation function to calculate how much of the long therm memory to retain
 
+    double _output; // retain the value f_t for use in backpropagation
+
 public:
     // Constructor
     ForgetGate();
+
+    // Return the output of feeding forward with forget gate
+    double get_output();
 
     // Set member variables
     void update_members(double input, double stm, double ltm);
@@ -48,7 +53,7 @@ public:
     void set_sw(double x); // Short weight
 
     // Output gate operations
-    double feedforward(); // using the current member variables, generate an output
+    void feedforward(); // using the current member variables, generate an output
 };
 
 #endif

@@ -30,6 +30,11 @@ void InputGate::update_weights(double w1, double w2, double b1)
     _sum_bias = b1;
 }
 
+double InputGate::get_output()
+{
+    return _output;
+}
+
 void InputGate::set_iw(double x)
 {
     _input_weight = x;
@@ -44,7 +49,7 @@ void InputGate::set_bias(double x)
 }
 
 // Input gate determines percentage of new memory
-double InputGate::feedforward()
+void InputGate::feedforward()
 {
-    return sigmoid(_input * _input_weight + _short_term_mem * _short_weight + _sum_bias);
+    _output = sigmoid(_input * _input_weight + _short_term_mem * _short_weight + _sum_bias);
 }
