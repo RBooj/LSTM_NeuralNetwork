@@ -252,25 +252,25 @@ In general, to calculate the derivatives of the loss function with respect to
 each of the tunable parameters, follow the chain rule for taking partial
 derivatives. That is, $\frac{\partial L}{\partial param} = (\frac{\partial L}{\partial gate}) (\frac{\partial gate}{\partial param})$.
 
-For this network, the loss function used is the RSS loss function, so:
+% U weights equations
+\begin{align*}
+    \frac{\partial L}{\partial U_i} & = \frac{\partial L}{\partial H_t} \frac{\partial H_t}{\partial C_t} \frac{\partial C_t}{\partial i_t} \frac{\partial i_t}{\partial U_i} \\ \frac{\partial L}{\partial U_f} & = \frac{\partial L}{\partial H_t} \frac{\partial H_t}{\partial C_t} \frac{\partial C_t}{\partial f_t} \frac{\partial f_t}{\partial U_f} \\ \frac{\partial L}{\partial U_g} & = \frac{\partial L}{\partial H_t} \frac{\partial H_t}{\partial C_t} \frac{\partial C_t}{\partial g_t} \frac{\partial g_t}{\partial U_g}
+\end{align*}
 
-\begin{subequations}
-    \begin{align}
-        L_t & = (y_t - H_t(x_t))^2                                 \\
-        L_t & = (y_t - (o_t\tanh((C_t))))                          \\
-        L_t & = (y_t - (o_t \tanh((f_t)(C_{t-1}) + (i_t)(g_t))))^2
-    \end{align}
-\end{subequations}
+% W Weights equations
+\begin{align*}
+    \frac{\partial L}{\partial W_i} & = \frac{\partial L}{\partial H_t} \frac{\partial H_t}{\partial C_t} \frac{\partial C_t}{\partial i_t} \frac{\partial i_t}{\partial W_i} \\ \frac{\partial L}{\partial W_f} & = \frac{\partial L}{\partial H_t} \frac{\partial H_t}{\partial C_t} \frac{\partial C_t}{\partial f_t} \frac{\partial f_t}{\partial W_f} \\ \frac{\partial L}{\partial W_g} & = \frac{\partial L}{\partial H_t} \frac{\partial H_t}{\partial C_t} \frac{\partial C_t}{\partial g_t} \frac{\partial g_t}{\partial W_g}
+\end{align*}
 
-Recall equations \ref{eqn:f_t}, \ref{eqn:i_t}, \ref{eqn:o_t} and \ref{eqn:g_t}
-which describe $f_t$, $i_t$, $o_t$ and $g_t$. Already the complexity of
-equation 12c is almost intolerable. This is why the chain rule is useful.
+% Biases equations
+\begin{align*}
+    \frac{\partial L}{\partial b_i} & = \frac{\partial L}{\partial H_t} \frac{\partial H_t}{\partial C_t} \frac{\partial C_t}{\partial i_t} \frac{\partial i_t}{\partial b_i} \\ \frac{\partial L}{\partial b_f} & = \frac{\partial L}{\partial H_t} \frac{\partial H_t}{\partial C_t} \frac{\partial C_t}{\partial f_t} \frac{\partial f_t}{\partial b_f} \\ \frac{\partial L}{\partial b_g} & = \frac{\partial L}{\partial H_t} \frac{\partial H_t}{\partial C_t} \frac{\partial C_t}{\partial g_t} \frac{\partial g_t}{\partial b_g}
+\end{align*}
 
-First,
+By evaluating each equation, we can find the derivative of the loss function
+with respect to each tunable parameter.
 
-\begin{math}
-    a
-\end{math}
+% TODO: Resume here
 
 \subsubsection{Loss Function}
 
