@@ -39,6 +39,8 @@ private:
     double _output; // Retain result of feedforward for backpropagation calculation
 
 public:
+    OutputGate();
+
     // Set member variables
     void update_members(double input, double ltm, double stm); // Encapsulate updating all 3 member variables
     void set_iw(double x);

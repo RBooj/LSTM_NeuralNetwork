@@ -53,7 +53,13 @@ void ForgetGate::set_sw(double x)
 {
     _short_weight = x;
 }
-// ----------------------------------------------------------
+
+void ForgetGate::update_members(double input, double stm, double ltm)
+{
+    _input = input;
+    _short_term_mem = stm;
+    _long_term_mem = ltm;
+}
 
 // Generate the output value using the current member variables and return it
 void ForgetGate::feedforward()

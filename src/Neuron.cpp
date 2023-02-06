@@ -139,8 +139,6 @@ void Neuron::backprop(double expected)
     // Calculate the new weights and biases according to the equation in the description document
     // W_new = W_old - (Loss derivative WRT weight/bias)*(learning rate)
     // Calculating intermediate values
-    // Result from forget gate
-    double f_t = _forget_gate.get_output();
     // Result from input gate
     double i_t = _input_gate.get_output();
     // Result from output gate
