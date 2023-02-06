@@ -44,6 +44,11 @@ public:
     // Return the output of feeding forward with forget gate
     double get_output();
 
+    // Getters
+    double get_uf(); // Input weight value
+    double get_wf(); // Hidden state weight value
+    double get_bf(); // Bias value
+
     // Set member variables
     void update_members(double input, double stm, double ltm);
 

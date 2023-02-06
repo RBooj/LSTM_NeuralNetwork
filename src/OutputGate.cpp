@@ -44,6 +44,21 @@ void OutputGate::update_weights(double w1, double w2, double b1)
     _sum_bias = b1;
 }
 
+double OutputGate::get_uo()
+{
+    return _input_weight;
+}
+
+double OutputGate::get_wo()
+{
+    return _short_weight;
+}
+
+double OutputGate::get_bo()
+{
+    return _sum_bias;
+}
+
 double OutputGate::get_output()
 {
     return _output;

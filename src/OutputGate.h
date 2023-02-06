@@ -48,6 +48,11 @@ public:
 
     double get_output(); // Return result of feedfoward with output gate
 
+    // Getters
+    double get_uo();
+    double get_wo();
+    double get_bo();
+
     // Output gate operations
     void feedforward(); // using the current member variables, generate an output
 };

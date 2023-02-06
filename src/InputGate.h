@@ -48,6 +48,11 @@ public:
 
     double get_output(); // RTeturn output value of input gate feedforward
 
+    // Getters
+    double get_ui();
+    double get_wi();
+    double get_bi();
+
     // Input gate operations
     void feedforward(); // using the current member variables, generate an output
 };

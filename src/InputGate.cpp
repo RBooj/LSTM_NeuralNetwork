@@ -35,6 +35,21 @@ double InputGate::get_output()
     return _output;
 }
 
+double InputGate::get_ui()
+{
+    return _input_weight;
+}
+
+double InputGate::get_wi()
+{
+    return _short_weight;
+}
+
+double InputGate::get_bi()
+{
+    return _sum_bias;
+}
+
 void InputGate::set_iw(double x)
 {
     _input_weight = x;

@@ -24,13 +24,20 @@ double ForgetGate::get_output()
     return _output;
 }
 
-// // Basic setters and getters for intercting with neuron class
-// void ForgetGate::update_members(double input, double stm, double ltm)
-// {
-//     _input = input;
-//     _short_term_mem = stm;
-//     _long_term_mem = ltm;
-// }
+double ForgetGate::get_uf()
+{
+    return _input_weight;
+}
+
+double ForgetGate::get_wf()
+{
+    return _short_weight;
+}
+
+double ForgetGate::get_bf()
+{
+    return _sum_bias;
+}
 
 void ForgetGate::set_bias(double x)
 {
